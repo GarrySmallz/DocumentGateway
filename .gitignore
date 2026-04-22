@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+/architecture.md
+/DevSecOps.pdf
+/use-cases.md
+/mvp.md
