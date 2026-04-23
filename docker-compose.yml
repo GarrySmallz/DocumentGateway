@@ -5,9 +5,9 @@ services:
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: rootpass
-      MARIADB_DATABASE: bewerbungsprojekt
-      MARIADB_USER: appuser
-      MARIADB_PASSWORD: apppass
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
