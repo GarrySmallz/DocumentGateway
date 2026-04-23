@@ -1,7 +1,6 @@
 package de.documentgateway.message.service;
 
 import de.documentgateway.message.dto.MessageResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
