@@ -4,19 +4,27 @@ import de.documentgateway.common.exception.ApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
+@ExtendWith(MockitoExtension.class)
 class MessageServiceTest {
 
+    @Mock
+    private XmlSchemaValidationService xmlSchemaValidationService;
+
+    @InjectMocks
     private MessageService messageService;
 
     @BeforeEach
     void setUp() {
-        messageService = new MessageService();
+        messageService = new MessageService(xmlSchemaValidationService);
     }
 
     @Test

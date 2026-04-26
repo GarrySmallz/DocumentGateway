@@ -9,6 +9,13 @@ import java.util.UUID;
 
 @Service
 public class MessageService {
+
+    private final XmlSchemaValidationService xmlSchemaValidationService;
+
+    public MessageService(XmlSchemaValidationService xmlSchemaValidationService) {
+        this.xmlSchemaValidationService = xmlSchemaValidationService;
+    }
+
     public MessageResponse processIncomingMessage(
             String partnerId,
             String messageType,
@@ -24,10 +31,15 @@ public class MessageService {
         if (xmlPayload == null || xmlPayload.isBlank()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "PAYLOAD_EMPTY", "message payload is null or empty");
         }
+        xmlSchemaValidationService.validate(xmlPayload);
+
         String effectiveCorrelationId =
                 (correlationId == null || correlationId.isBlank())
                         ? UUID.randomUUID().toString()
                         : correlationId.trim();
+
+
+
 
         return new MessageResponse(
                 effectiveCorrelationId,
