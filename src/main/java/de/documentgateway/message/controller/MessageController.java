@@ -17,7 +17,7 @@ public class MessageController {
     public ResponseEntity<MessageResponse> receiveMessage(
           @RequestHeader("X-Partner-Id") String partnerId,
           @RequestHeader("X-Message-Type") String messageType,
-          @RequestHeader(value = "X-Corrrelation-Id", required = false) String correlationId,
+          @RequestHeader(value = "X-Correlation-Id", required = false) String correlationId,
           @RequestBody String xmlPayload
     ) {
         MessageResponse response = messageService.processIncomingMessage(
