@@ -33,25 +33,29 @@ public class XmlSchemaValidationService {
 
 
     public void validate(String xmlPayload) {
+        if (invoiceSchema == null) {
+            throw new ApiException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "XSD_NOT_AVAILABLE",
+                    "XML schema is not available"
+            );
+        }
+
         try {
-            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-            Schema schema = factory.newSchema(
-                    getClass().getResource("/xsd/invoice-message.xsd"));
-
-            Validator validator = schema.newValidator();
+            Validator validator = invoiceSchema.newValidator();
             validator.validate(new StreamSource(new StringReader(xmlPayload)));
         } catch (SAXException e) {
             throw new ApiException(
                     HttpStatus.BAD_REQUEST,
                     "XML_VALIDATION_FAILED",
-                    "XML does not match the expected schema");
+                    "XML does not match the expected schema"
+            );
         } catch (IOException e) {
             throw new ApiException(
                     HttpStatus.BAD_REQUEST,
                     "XSD_VALIDATION_FAILED",
-                    "Could not read XML for validation");
+                    "Could not read XML for validation"
+            );
         }
-
     }
 }
