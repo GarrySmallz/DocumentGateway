@@ -1,6 +1,8 @@
 package de.documentgateway.message.client;
 
+import de.documentgateway.common.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +15,13 @@ public class ReceiverClientMockImpl implements ReceiverClient {
         long start = System.currentTimeMillis();
         log.info("event=receiver_send_attempt receiverId={} correlationId={} payloadSize={}",
                 receiverId, correlationId, xmlPayload.length());
+
+        if (receiverId ==null || receiverId.isBlank()) {
+
+            log.error("event=receiver_send_failure receiverId={} correlationId={} reason=receiverId_blank",
+                    receiverId, correlationId);
+            throw new ApiException(HttpStatus.BAD_REQUEST, "RECEIVER_ID_BLANK", "receiverId is blank");
+        }
 
         try {
             long duration = System.currentTimeMillis() - start;

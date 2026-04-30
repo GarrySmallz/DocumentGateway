@@ -34,10 +34,10 @@ class MessageServiceTest {
     @DisplayName("processIncomingMessage: blank partnerId -> 400 MISSING_PARTNER_ID")
     void shouldRejectBlankPartnerId() {
         //arrange
-        String partnerId = "  ";
-        String messageType = "invoice";
-        String correlationId = "7b8f0d6f-8d90-4f7a-8bf3-3bc4d8b0f6d9";
-        String xml = "<invoice/>";
+            String partnerId = "  ";
+            String messageType = "invoice";
+            String correlationId = "7b8f0d6f-8d90-4f7a-8bf3-3bc4d8b0f6d9";
+            String xml = "<invoice/>";
 
         //act
         ApiException ex = assertThrows(ApiException.class, () -> {
