@@ -1,7 +1,7 @@
 package de.documentgateway.message.service;
 
 import de.documentgateway.common.exception.ApiException;
-import org.junit.jupiter.api.BeforeEach;
+import de.documentgateway.message.client.ReceiverClientMockImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,16 +19,16 @@ class MessageServiceTest {
     @Mock
     private XmlSchemaValidationService xmlSchemaValidationService;
 
+    @Mock
+    private ReceiverClientMockImpl receiverClient;
+
+    @Mock
+    private RoutingService routingService;
+
     @InjectMocks
     private MessageService messageService;
 
-    @InjectMocks
-    private RoutingService routingService;
 
-    @BeforeEach
-    void setUp() {
-        messageService = new MessageService(xmlSchemaValidationService, routingService);
-    }
 
     @Test
     @DisplayName("processIncomingMessage: blank partnerId -> 400 MISSING_PARTNER_ID")
@@ -85,6 +85,24 @@ class MessageServiceTest {
         //assert
         assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
         assertEquals("PAYLOAD_EMPTY", ex.getCode());
+    }
+
+    @Test
+    @DisplayName("processIncomingMessage: generate correlationId if not existing")
+    void shouldGenerateCorrelationIdIfNotProvided() {
+        //arrange
+        String partnerId = "partner-a";
+        String messageType = "invoice";
+        String correlationId = null;
+        String xml = "<invoice/>";
+
+        //act
+        var response = messageService.processIncomingMessage(partnerId, messageType, correlationId, xml);
+
+        //assert
+        assertEquals("RECEIVED", response.status());
+        assertEquals("Message received successfully", response.message());
+        assertEquals(36, response.correlationId().length());
     }
 
 }
