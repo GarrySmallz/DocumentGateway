@@ -22,9 +22,12 @@ class MessageServiceTest {
     @InjectMocks
     private MessageService messageService;
 
+    @InjectMocks
+    private RoutingService routingService;
+
     @BeforeEach
     void setUp() {
-        messageService = new MessageService(xmlSchemaValidationService);
+        messageService = new MessageService(xmlSchemaValidationService, routingService);
     }
 
     @Test
