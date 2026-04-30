@@ -1,7 +1,8 @@
 package de.documentgateway.message.service;
 
 import de.documentgateway.common.exception.ApiException;
-import org.junit.jupiter.api.BeforeEach;
+import de.documentgateway.message.client.ReceiverClientMockImpl;
+import de.documentgateway.message.routing.RoutingService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,22 +20,25 @@ class MessageServiceTest {
     @Mock
     private XmlSchemaValidationService xmlSchemaValidationService;
 
+    @Mock
+    private ReceiverClientMockImpl receiverClient;
+
+    @Mock
+    private RoutingService routingService;
+
     @InjectMocks
     private MessageService messageService;
 
-    @BeforeEach
-    void setUp() {
-        messageService = new MessageService(xmlSchemaValidationService);
-    }
+
 
     @Test
     @DisplayName("processIncomingMessage: blank partnerId -> 400 MISSING_PARTNER_ID")
     void shouldRejectBlankPartnerId() {
         //arrange
-        String partnerId = "  ";
-        String messageType = "invoice";
-        String correlationId = "7b8f0d6f-8d90-4f7a-8bf3-3bc4d8b0f6d9";
-        String xml = "<invoice/>";
+            String partnerId = "  ";
+            String messageType = "invoice";
+            String correlationId = "7b8f0d6f-8d90-4f7a-8bf3-3bc4d8b0f6d9";
+            String xml = "<invoice/>";
 
         //act
         ApiException ex = assertThrows(ApiException.class, () -> {
@@ -82,6 +86,24 @@ class MessageServiceTest {
         //assert
         assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
         assertEquals("PAYLOAD_EMPTY", ex.getCode());
+    }
+
+    @Test
+    @DisplayName("processIncomingMessage: generate correlationId if not existing")
+    void shouldGenerateCorrelationIdIfNotProvided() {
+        //arrange
+        String partnerId = "partner-a";
+        String messageType = "invoice";
+        String correlationId = null;
+        String xml = "<invoice/>";
+
+        //act
+        var response = messageService.processIncomingMessage(partnerId, messageType, correlationId, xml);
+
+        //assert
+        assertEquals("RECEIVED", response.status());
+        assertEquals("Message received successfully", response.message());
+        assertEquals(36, response.correlationId().length());
     }
 
 }

@@ -2,19 +2,20 @@ package de.documentgateway.message.service;
 
 import de.documentgateway.common.exception.ApiException;
 import de.documentgateway.message.dto.MessageResponse;
+import de.documentgateway.message.routing.RoutingService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class MessageService {
 
     private final XmlSchemaValidationService xmlSchemaValidationService;
 
-    public MessageService(XmlSchemaValidationService xmlSchemaValidationService) {
-        this.xmlSchemaValidationService = xmlSchemaValidationService;
-    }
+    private final RoutingService routingService;
 
     public MessageResponse processIncomingMessage(
             String partnerId,
@@ -39,6 +40,7 @@ public class MessageService {
                         : correlationId.trim();
 
 
+        routingService.routeAndForward(partnerId, messageType, effectiveCorrelationId, xmlPayload);
 
 
         return new MessageResponse(
