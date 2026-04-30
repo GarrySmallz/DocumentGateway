@@ -2,6 +2,7 @@ package de.documentgateway.message.service;
 
 import de.documentgateway.common.exception.ApiException;
 import de.documentgateway.message.client.ReceiverClientMockImpl;
+import de.documentgateway.message.routing.RoutingService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

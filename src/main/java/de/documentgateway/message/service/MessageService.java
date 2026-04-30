@@ -2,6 +2,7 @@ package de.documentgateway.message.service;
 
 import de.documentgateway.common.exception.ApiException;
 import de.documentgateway.message.dto.MessageResponse;
+import de.documentgateway.message.routing.RoutingService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
