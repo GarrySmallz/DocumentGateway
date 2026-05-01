@@ -1,24 +1,32 @@
 package de.documentgateway.message.service;
 
+import de.documentgateway.audit.AuditService;
 import de.documentgateway.common.exception.ApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.xml.sax.SAXException;
 
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@ExtendWith(MockitoExtension.class)
 class XmlSchemaValidationServiceTest {
 
+    @Mock
+    private AuditService auditService;
 
+    @InjectMocks
     private XmlSchemaValidationService xmlSchemaValidationService;
 
     @BeforeEach
     void setUp() throws SAXException {
-        xmlSchemaValidationService = new XmlSchemaValidationService();
+        xmlSchemaValidationService = new XmlSchemaValidationService(auditService);
         xmlSchemaValidationService.loadSchema();
     }
 
@@ -58,7 +66,7 @@ class XmlSchemaValidationServiceTest {
     @Test
     @DisplayName("loadSchema: schema is available and usable")
     void shouldLoadSchemaSuccessfully() {
-        XmlSchemaValidationService service = new XmlSchemaValidationService();
+        XmlSchemaValidationService service = new XmlSchemaValidationService(auditService);
 
         assertDoesNotThrow(service::loadSchema);
 

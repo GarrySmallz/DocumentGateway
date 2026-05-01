@@ -1,4 +1,4 @@
-package de.documentgateway.message.entity;
+package de.documentgateway.audit;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,9 +26,11 @@ public class AuditEvent {
 
     private String partnerId;
 
-    private String eventType;
+    @Enumerated(EnumType.STRING)
+    private AuditEventType eventType;
 
-    private String outcome;
+    @Enumerated(EnumType.STRING)
+    private AuditOutcome outcome;
 
     private String errorCode;
 
