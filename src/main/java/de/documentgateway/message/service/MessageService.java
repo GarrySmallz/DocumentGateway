@@ -1,5 +1,8 @@
 package de.documentgateway.message.service;
 
+import de.documentgateway.audit.AuditEventType;
+import de.documentgateway.audit.AuditOutcome;
+import de.documentgateway.audit.AuditService;
 import de.documentgateway.common.exception.ApiException;
 import de.documentgateway.message.dto.MessageResponse;
 import de.documentgateway.message.routing.RoutingService;
@@ -17,6 +20,8 @@ public class MessageService {
 
     private final RoutingService routingService;
 
+    private final AuditService auditService;
+
     public MessageResponse processIncomingMessage(
             String partnerId,
             String messageType,
@@ -32,7 +37,6 @@ public class MessageService {
         if (xmlPayload == null || xmlPayload.isBlank()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "PAYLOAD_EMPTY", "message payload is null or empty");
         }
-        xmlSchemaValidationService.validate(xmlPayload);
 
         String effectiveCorrelationId =
                 (correlationId == null || correlationId.isBlank())
@@ -40,7 +44,48 @@ public class MessageService {
                         : correlationId.trim();
 
 
-        routingService.routeAndForward(partnerId, messageType, effectiveCorrelationId, xmlPayload);
+        auditService.logMessageReceived(
+                effectiveCorrelationId,
+                partnerId,
+                AuditEventType.MESSAGE_RECEIVED,
+                AuditOutcome.SUCCESS);
+
+        try {
+            xmlSchemaValidationService.validate(xmlPayload);
+            auditService.logSuccess(
+                    effectiveCorrelationId,
+                    partnerId,
+                    AuditEventType.XSD_VALIDATION,
+                    AuditOutcome.SUCCESS);
+
+        } catch (ApiException e) {
+            auditService.logFailure(
+                    effectiveCorrelationId,
+                    partnerId,
+                    AuditEventType.XSD_VALIDATION,
+                    AuditOutcome.FAILURE,
+                    e.getCode());
+            throw e;
+        }
+
+
+
+        try {
+            routingService.routeAndForward(partnerId, messageType, effectiveCorrelationId, xmlPayload);
+            auditService.logSuccess(
+                    effectiveCorrelationId,
+                    partnerId,
+                    AuditEventType.ROUTING,
+                    AuditOutcome.SUCCESS
+                    );
+        } catch (ApiException e) {
+            auditService.logFailure(effectiveCorrelationId,
+                    partnerId,
+                    AuditEventType.ROUTING,
+                    AuditOutcome.FAILURE,
+                    e.getCode());
+            throw e;
+        }
 
 
         return new MessageResponse(

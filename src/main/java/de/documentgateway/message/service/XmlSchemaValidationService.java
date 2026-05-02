@@ -2,6 +2,7 @@ package de.documentgateway.message.service;
 
 import de.documentgateway.common.exception.ApiException;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
@@ -16,7 +17,9 @@ import java.io.StringReader;
 import java.net.URL;
 
 @Service
+@RequiredArgsConstructor
 public class XmlSchemaValidationService {
+
 
 
     private Schema invoiceSchema;

@@ -1,5 +1,6 @@
 package de.documentgateway.message.service;
 
+import de.documentgateway.audit.AuditService;
 import de.documentgateway.common.exception.ApiException;
 import de.documentgateway.message.client.ReceiverClientMockImpl;
 import de.documentgateway.message.routing.RoutingService;
@@ -26,6 +27,9 @@ class MessageServiceTest {
     @Mock
     private RoutingService routingService;
 
+    @Mock
+    private AuditService auditService;
+
     @InjectMocks
     private MessageService messageService;
 
@@ -41,9 +45,8 @@ class MessageServiceTest {
             String xml = "<invoice/>";
 
         //act
-        ApiException ex = assertThrows(ApiException.class, () -> {
-            messageService.processIncomingMessage(partnerId, messageType, correlationId, xml);
-        });
+        ApiException ex = assertThrows(ApiException.class, () ->
+                messageService.processIncomingMessage(partnerId, messageType, correlationId, xml));
 
         //assert
         assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
@@ -60,9 +63,8 @@ class MessageServiceTest {
         String xml = "<invoice/>";
 
         //act
-        ApiException ex = assertThrows(ApiException.class, () -> {
-            messageService.processIncomingMessage(partnerId, messageType, correlationId, xml);
-        });
+        ApiException ex = assertThrows(ApiException.class, () ->
+                messageService.processIncomingMessage(partnerId, messageType, correlationId, xml));
 
         //assert
         assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
@@ -79,9 +81,8 @@ class MessageServiceTest {
         String xml = "   ";
 
         //act
-        ApiException ex = assertThrows(ApiException.class, () -> {
-            messageService.processIncomingMessage(partnerId, messageType, correlationId, xml);
-        });
+        ApiException ex = assertThrows(ApiException.class, () ->
+                messageService.processIncomingMessage(partnerId, messageType, correlationId, xml));
 
         //assert
         assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
