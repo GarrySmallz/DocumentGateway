@@ -26,7 +26,7 @@ class XmlSchemaValidationServiceTest {
 
     @BeforeEach
     void setUp() throws SAXException {
-        xmlSchemaValidationService = new XmlSchemaValidationService(auditService);
+        xmlSchemaValidationService = new XmlSchemaValidationService();
         xmlSchemaValidationService.loadSchema();
     }
 
@@ -42,9 +42,7 @@ class XmlSchemaValidationServiceTest {
                         """;
 
         //act
-        ApiException ex = assertThrows(ApiException.class, () -> {
-            xmlSchemaValidationService.validate(xml);
-        });
+        ApiException ex = assertThrows(ApiException.class, () -> xmlSchemaValidationService.validate(xml));
 
         //assert
         assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
@@ -66,7 +64,7 @@ class XmlSchemaValidationServiceTest {
     @Test
     @DisplayName("loadSchema: schema is available and usable")
     void shouldLoadSchemaSuccessfully() {
-        XmlSchemaValidationService service = new XmlSchemaValidationService(auditService);
+        XmlSchemaValidationService service = new XmlSchemaValidationService();
 
         assertDoesNotThrow(service::loadSchema);
 

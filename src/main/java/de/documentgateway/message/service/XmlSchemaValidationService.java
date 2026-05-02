@@ -1,6 +1,5 @@
 package de.documentgateway.message.service;
 
-import de.documentgateway.audit.AuditService;
 import de.documentgateway.common.exception.ApiException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import java.net.URL;
 @RequiredArgsConstructor
 public class XmlSchemaValidationService {
 
-    private  final AuditService auditService;
 
 
     private Schema invoiceSchema;
