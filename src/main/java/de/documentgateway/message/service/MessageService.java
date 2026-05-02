@@ -60,7 +60,7 @@ public class MessageService {
                     partnerId,
                     AuditEventType.XSD_VALIDATION,
                     AuditOutcome.FAILURE,
-                    e.getMessage());
+                    e.getCode());
             throw e;
         }
 
@@ -71,15 +71,15 @@ public class MessageService {
             auditService.logSuccess(
                     effectiveCorrelationId,
                     partnerId,
-                    AuditEventType.XSD_VALIDATION,
+                    AuditEventType.ROUTING,
                     AuditOutcome.SUCCESS
                     );
         } catch (ApiException e) {
             auditService.logFailure(effectiveCorrelationId,
                     partnerId,
-                    AuditEventType.XSD_VALIDATION,
+                    AuditEventType.ROUTING,
                     AuditOutcome.FAILURE,
-                    e.getMessage());
+                    e.getCode());
             throw e;
         }
 
