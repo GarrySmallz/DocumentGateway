@@ -24,8 +24,8 @@ public class AuditService {
     }
 
 
-    public void logMessageReceived(String correlationId, String partnerId, AuditEventType eventType) {
-        persist(correlationId, partnerId, eventType, null, null);
+    public void logMessageReceived(String correlationId, String partnerId, AuditEventType eventType, AuditOutcome outcome) {
+        persist(correlationId, partnerId, eventType, outcome, null);
     }
 
 

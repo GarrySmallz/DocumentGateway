@@ -31,15 +31,14 @@ class AuditServiceTest {
         auditService.logMessageReceived(
                 CORRELATION_ID,
                 PARTNER_ID,
-                AuditEventType.MESSAGE_RECEIVED
+                AuditEventType.MESSAGE_RECEIVED,
+                AuditOutcome.SUCCESS
         );
 
         // assert
         assertSaved(
-                CORRELATION_ID,
-                PARTNER_ID,
                 AuditEventType.MESSAGE_RECEIVED,
-                null,
+                AuditOutcome.SUCCESS,
                 null
         );
     }
@@ -57,8 +56,6 @@ class AuditServiceTest {
 
         // assert
         assertSaved(
-                CORRELATION_ID,
-                PARTNER_ID,
                 AuditEventType.XSD_VALIDATION,
                 AuditOutcome.SUCCESS,
                 null
@@ -82,8 +79,6 @@ class AuditServiceTest {
 
         // assert
         assertSaved(
-                CORRELATION_ID,
-                PARTNER_ID,
                 AuditEventType.XSD_VALIDATION,
                 AuditOutcome.FAILURE,
                 errorCode
@@ -91,15 +86,13 @@ class AuditServiceTest {
     }
 
     private void assertSaved(
-            String correlationId,
-            String partnerId,
             AuditEventType eventType,
             AuditOutcome expectedOutcome,
             String expectedErrorCode
     ) {
         verify(repository).save(argThat(event ->
-                event.getCorrelationId().equals(correlationId)
-                        && event.getPartnerId().equals(partnerId)
+                event.getCorrelationId().equals(AuditServiceTest.CORRELATION_ID)
+                        && event.getPartnerId().equals(AuditServiceTest.PARTNER_ID)
                         && event.getEventType() == eventType
                         && Objects.equals(event.getOutcome(), expectedOutcome)
                         && Objects.equals(event.getErrorCode(), expectedErrorCode)

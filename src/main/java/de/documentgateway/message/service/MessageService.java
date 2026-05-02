@@ -44,7 +44,11 @@ public class MessageService {
                         : correlationId.trim();
 
 
-        auditService.logMessageReceived(effectiveCorrelationId, partnerId, AuditEventType.MESSAGE_RECEIVED);
+        auditService.logMessageReceived(
+                effectiveCorrelationId,
+                partnerId,
+                AuditEventType.MESSAGE_RECEIVED,
+                AuditOutcome.SUCCESS);
 
         try {
             xmlSchemaValidationService.validate(xmlPayload);
