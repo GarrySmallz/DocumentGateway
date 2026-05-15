@@ -3,33 +3,43 @@ package de.documentgateway.message.controller;
 
 import de.documentgateway.message.dto.MessageResponse;
 import de.documentgateway.message.service.MessageService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(MessageController.class)
+/**
+ * Standalone {@link MockMvc} ohne Spring-Security- und Servlet-Filter — testet nur den Controller.
+ * API-Key-Auth wird in Integrations- bzw. separaten Security-Tests abgedeckt.
+ */
+@ExtendWith(MockitoExtension.class)
 class MessageControllerTest {
 
-    @Autowired
+    @Mock
+    private MessageService messageService;
+
     private MockMvc mockMvc;
 
-    @MockitoBean
-    private MessageService messageService;
+    @BeforeEach
+    void setUp() {
+        MessageController controller = new MessageController(messageService);
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    }
 
     @Test
     @DisplayName("POST /api/v1/messages -> 202 success")
     void shouldReturnAcceptedWhenRequestIsValid() throws Exception {
 
-        //arrange
         MessageResponse response = new MessageResponse(
                 "test-correlation-id",
                 "RECEIVED",
@@ -45,7 +55,6 @@ class MessageControllerTest {
 
         String xml = "<message><id>1</id></message>";
 
-        //Act + Assert
         mockMvc.perform(post("/api/v1/messages")
                 .contentType(MediaType.APPLICATION_XML)
                 .header("X-Partner-Id", "partner-a")
@@ -54,8 +63,4 @@ class MessageControllerTest {
                 .content(xml))
                 .andExpect(status().isAccepted());
     }
-
-
-
-
 }
