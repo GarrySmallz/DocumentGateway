@@ -14,8 +14,6 @@ public class AuthenticationService {
 
     private static final String AUTH_TOKEN_HEADER_NAME = "X-API-KEY";
 
-    private final GatewayApiKeyProperties apiKeyProperties;
-
     @Value("${gateway.api-key}")
     private String expectedApiKey;
 

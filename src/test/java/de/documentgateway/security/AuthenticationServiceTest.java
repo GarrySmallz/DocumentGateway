@@ -11,10 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class AuthenticationServiceTest {
+    
 
-    GatewayApiKeyProperties gatewayApiKeyProperties = new GatewayApiKeyProperties();
-
-    AuthenticationService authenticationService = new AuthenticationService(gatewayApiKeyProperties);
+    AuthenticationService authenticationService = new AuthenticationService();
     @Test
     @DisplayName("Authentication should fail with wrong API key")
     void authenticationShouldFailWithFalseKey() {
