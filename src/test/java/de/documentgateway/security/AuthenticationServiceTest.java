@@ -12,11 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationServiceTest {
 
+    GatewayApiKeyProperties gatewayApiKeyProperties = new GatewayApiKeyProperties();
+
+    AuthenticationService authenticationService = new AuthenticationService(gatewayApiKeyProperties);
     @Test
     @DisplayName("Authentication should fail with wrong API key")
     void authenticationShouldFailWithFalseKey() {
         //arrange
-        AuthenticationService authenticationService = new AuthenticationService();
         String apiKey = "falseKey";
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -30,7 +32,6 @@ class AuthenticationServiceTest {
     @DisplayName("Authentication should fail with missing API key")
     void authenticationShouldFailWithMissingKey() {
         //arrange
-        AuthenticationService authenticationService = new AuthenticationService();
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -42,7 +43,6 @@ class AuthenticationServiceTest {
     @DisplayName("Authentication should succeed with correct API key")
     void shouldSucceedWithCorrectKey() {
         //arrange
-        AuthenticationService authenticationService = new AuthenticationService();
         ReflectionTestUtils.setField(authenticationService, "expectedApiKey", "test-key");
 
         MockHttpServletRequest request = new MockHttpServletRequest();
