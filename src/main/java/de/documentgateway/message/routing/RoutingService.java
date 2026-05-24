@@ -3,6 +3,7 @@ package de.documentgateway.message.routing;
 import de.documentgateway.common.exception.ApiException;
 import de.documentgateway.message.client.ReceiverClientMockImpl;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,7 +21,7 @@ public class RoutingService {
         if (config == null || config.getReceiverId() == null || config.getReceiverId().isBlank()) {
             throw new
                     ApiException(
-                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    HttpStatus.NOT_FOUND,
                     "ROUTE_NOT_FOUND",
                     "No route configured for partner/messageType"
             );
