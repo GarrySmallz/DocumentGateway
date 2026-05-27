@@ -51,7 +51,7 @@ class RoutingServiceTest {
         RoutingService emptyRouting = new RoutingService(receiverClient, new RoutingProperties());
         ApiException ex = assertThrows(ApiException.class, () ->
                 emptyRouting.routeAndForward("unknown", "invoice", "corr-1", "<xml/>"));
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
+        assertEquals(HttpStatus.NOT_FOUND, ex.getHttpStatus());
         assertEquals("ROUTE_NOT_FOUND", ex.getCode());
         verify(receiverClient, never()).send(any(), any(), any());
     }
