@@ -19,7 +19,10 @@ public class AuthenticationService {
     public Authentication getAuthentication(HttpServletRequest request) {
         String apiKey = request.getHeader(AUTH_TOKEN_HEADER_NAME);
         String partnerId = request.getHeader("X-Partner-Id");
-        if (apiKey == null) {
+        if (partnerId == null || partnerId.isBlank()) {
+            throw new BadCredentialsException("Invalid Partner Id");
+        }
+        if (apiKey == null || apiKey.isBlank()) {
             throw new BadCredentialsException("Invalid API Key");
         } else if (!gatewayApiKeyProperties.getApiKeys().containsKey(partnerId)) {
             throw new BadCredentialsException("Invalid Partner Id");

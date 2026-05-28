@@ -64,4 +64,41 @@ class MessageControllerSecurityIntegrationTest {
                         .content(VALID_XML))
                 .andExpect(status().isAccepted());
     }
+
+    @Test
+    @DisplayName("POST ohne X-Partner-Id -> 401")
+    void shouldReturn401_whenXPartnerIdMissing() throws Exception {
+        mockMvc.perform(post("/api/v1/messages")
+                        .contentType(MediaType.APPLICATION_XML)
+                        .header("X-Message-Type", "invoice")
+                        .header("X-API-KEY", VALID_API_KEY)
+                        .content(VALID_XML))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("POST ohne passenden Key für Partner Id -> 401")
+    void shouldReturn401_whenUnmatchingKeyAndPartnerId() throws Exception {
+        mockMvc.perform(post("/api/v1/messages")
+                        .contentType(MediaType.APPLICATION_XML)
+                        .header("X-Partner-Id", "partner-b")
+                        .header("X-Message-Type", "invoice")
+                        .header("X-API-KEY", VALID_API_KEY)
+                        .content(VALID_XML))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("Unerwarteter Fehler im Service -> 500")
+    void shouldReturn500_whenUnexpectedExceptionThrown() throws Exception {
+        when(messageService.processIncomingMessage(any(), any(), any(), any()))
+                .thenThrow(new RuntimeException("unexpected failure"));
+        mockMvc.perform(post("/api/v1/messages")
+                        .contentType(MediaType.APPLICATION_XML)
+                        .header("X-Partner-Id", "partner-a")
+                        .header("X-Message-Type", "invoice")
+                        .header("X-API-KEY", "test-api-key")
+                        .content(VALID_XML))
+                .andExpect(status().isInternalServerError());
+    }
 }
