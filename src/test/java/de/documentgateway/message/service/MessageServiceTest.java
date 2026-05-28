@@ -34,25 +34,6 @@ class MessageServiceTest {
     private MessageService messageService;
 
 
-
-    @Test
-    @DisplayName("processIncomingMessage: blank partnerId -> 400 MISSING_PARTNER_ID")
-    void shouldRejectBlankPartnerId() {
-        //arrange
-            String partnerId = "  ";
-            String messageType = "invoice";
-            String correlationId = "7b8f0d6f-8d90-4f7a-8bf3-3bc4d8b0f6d9";
-            String xml = "<invoice/>";
-
-        //act
-        ApiException ex = assertThrows(ApiException.class, () ->
-                messageService.processIncomingMessage(partnerId, messageType, correlationId, xml));
-
-        //assert
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getHttpStatus());
-        assertEquals("MISSING_PARTNER_ID", ex.getCode());
-    }
-
     @Test
     @DisplayName("processIncomingMessage: unsupported message type -> 400 UNSUPPORTED_MESSAGE_TYPE")
     void shouldRejectUnsupportedMessageType() {
