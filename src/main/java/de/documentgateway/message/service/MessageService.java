@@ -28,9 +28,6 @@ public class MessageService {
             String correlationId,
             String xmlPayload
     ) {
-        if (partnerId == null || partnerId.isBlank()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "MISSING_PARTNER_ID", "X-Partner-Id header is required");
-        }
         if (!"invoice".equals(messageType)) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "UNSUPPORTED_MESSAGE_TYPE", "message type is not supported");
         }
