@@ -59,7 +59,7 @@ public class MessageService {
             auditService.logFailure(
                     effectiveCorrelationId,
                     partnerId,
-                    AuditEventType.XSD_VALIDATION,
+                    AuditEventType.REJECTED_VALIDATION,
                     AuditOutcome.FAILURE,
                     e.getCode());
             throw e;

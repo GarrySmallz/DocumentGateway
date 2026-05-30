@@ -72,14 +72,14 @@ class AuditServiceTest {
         auditService.logFailure(
                 CORRELATION_ID,
                 PARTNER_ID,
-                AuditEventType.XSD_VALIDATION,
+                AuditEventType.REJECTED_VALIDATION,
                 AuditOutcome.FAILURE,
                 errorCode
         );
 
         // assert
         assertSaved(
-                AuditEventType.XSD_VALIDATION,
+                AuditEventType.REJECTED_VALIDATION,
                 AuditOutcome.FAILURE,
                 errorCode
         );
