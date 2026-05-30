@@ -28,18 +28,10 @@ public class MessageService {
             String correlationId,
             String xmlPayload
     ) {
-        if (!"invoice".equals(messageType)) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "UNSUPPORTED_MESSAGE_TYPE", "message type is not supported");
-        }
-        if (xmlPayload == null || xmlPayload.isBlank()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "PAYLOAD_EMPTY", "message payload is null or empty");
-        }
-
         String effectiveCorrelationId =
                 (correlationId == null || correlationId.isBlank())
                         ? UUID.randomUUID().toString()
                         : correlationId.trim();
-
 
         auditService.logMessageReceived(
                 effectiveCorrelationId,
@@ -47,6 +39,24 @@ public class MessageService {
                 AuditEventType.MESSAGE_RECEIVED,
                 AuditOutcome.SUCCESS);
 
+        if (!"invoice".equals(messageType)) {
+            auditService.logFailure(
+                    effectiveCorrelationId,
+                    partnerId,
+                    AuditEventType.REJECTED_VALIDATION,
+                    AuditOutcome.FAILURE,
+                    "UNSUPPORTED_MESSAGE_TYPE");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "UNSUPPORTED_MESSAGE_TYPE", "message type is not supported");
+        }
+        if (xmlPayload == null || xmlPayload.isBlank()) {
+            auditService.logFailure(
+                    effectiveCorrelationId,
+                    partnerId,
+                    AuditEventType.REJECTED_VALIDATION,
+                    AuditOutcome.FAILURE,
+                    "PAYLOAD_EMPTY");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "PAYLOAD_EMPTY", "message payload is null or empty");
+        }
         try {
             xmlSchemaValidationService.validate(xmlPayload);
             auditService.logSuccess(
@@ -59,7 +69,7 @@ public class MessageService {
             auditService.logFailure(
                     effectiveCorrelationId,
                     partnerId,
-                    AuditEventType.XSD_VALIDATION,
+                    AuditEventType.REJECTED_VALIDATION,
                     AuditOutcome.FAILURE,
                     e.getCode());
             throw e;
