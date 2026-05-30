@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -28,7 +30,9 @@ public class AuthenticationService {
             throw new BadCredentialsException("Invalid API Key");
         } else if (!gatewayApiKeyProperties.getApiKeys().containsKey(partnerId)) {
             throw new BadCredentialsException("Invalid Partner Id");
-        } else if (!gatewayApiKeyProperties.getApiKeys().get(partnerId).equals(apiKey)) {
+        }
+        String expectedApiKey = gatewayApiKeyProperties.getApiKeys().get(partnerId);
+        if (!MessageDigest.isEqual(expectedApiKey.getBytes(), apiKey.getBytes())) {
             throw new BadCredentialsException("Invalid API Key for Partner Id");
         }
 
