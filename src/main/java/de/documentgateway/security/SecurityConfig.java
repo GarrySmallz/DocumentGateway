@@ -25,7 +25,8 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry.requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/openapi.yaml"
                                 ).permitAll().anyRequest()
                                 .authenticated())
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->

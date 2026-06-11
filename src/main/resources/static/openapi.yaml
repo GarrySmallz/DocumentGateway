@@ -1,0 +1,179 @@
+openapi: "3.0.3"
+info:
+  title: DocumentGateway API
+  description: >
+    B2B-Document-Gateway — nimmt XML-Nachrichten entgegen, validiert sie
+    gegen ein XSD-Schema, routet sie zum Empfänger und schreibt Audit-Events.
+  version: v1
+servers:
+  - url: http://localhost:8080
+    description: Lokaler Entwicklungsserver
+security:
+  - apiKey: []
+paths:
+  /api/v1/messages:
+    post:
+      summary: XML-Nachricht einliefern
+      description: >
+        Nimmt eine XML-Nachricht entgegen, validiert sie gegen das XSD-Schema,
+        routet sie zum konfigurierten Empfänger und schreibt Audit-Events
+        für Erfolg und Fehler.
+      operationId: receiveMessage
+      parameters:
+        - name: X-Partner-Id
+          in: header
+          required: true
+          description: ID des sendenden Partners
+          schema:
+            type: string
+          example: partner-a
+        - name: X-Message-Type
+          in: header
+          required: true
+          description: Typ der einzuliefernden Nachricht
+          schema:
+            type: string
+            enum:
+              - invoice
+          example: invoice
+        - name: X-Correlation-Id
+          in: header
+          required: false
+          description: >
+            Optionale Korrelations-ID für Request-Tracing.
+            Wird automatisch als UUID generiert, wenn nicht angegeben.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/InvoiceMessage"
+      responses:
+        "202":
+          description: Nachricht erfolgreich angenommen und verarbeitet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+              example:
+                correlationId: "550e8400-e29b-41d4-a716-446655440000"
+                status: "RECEIVED"
+                message: "Message received successfully"
+        "400":
+          description: Fehlender Header, leerer Body, ungültiger Nachrichtentyp oder XSD-Validierungsfehler
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                missing-header:
+                  summary: Pflicht-Header fehlt
+                  value:
+                    timestamp: "2025-01-15T10:30:00Z"
+                    correlationId: "550e8400-e29b-41d4-a716-446655440000"
+                    code: "MISSING_HEADER"
+                    message: "Required request header 'X-Message-Type' is not present"
+                unsupported-type:
+                  summary: Nicht unterstützter Nachrichtentyp
+                  value:
+                    timestamp: "2025-01-15T10:30:00Z"
+                    correlationId: "550e8400-e29b-41d4-a716-446655440000"
+                    code: "UNSUPPORTED_MESSAGE_TYPE"
+                    message: "message type is not supported"
+                xsd-validation-failed:
+                  summary: XML entspricht nicht dem XSD-Schema
+                  value:
+                    timestamp: "2025-01-15T10:30:00Z"
+                    correlationId: "550e8400-e29b-41d4-a716-446655440000"
+                    code: "XML_VALIDATION_FAILED"
+                    message: "XML does not match the expected schema"
+        "401":
+          description: Ungültiger API-Key oder unbekannte Partner-Id
+          content:
+            application/json:
+              schema:
+                type: string
+              examples:
+                invalid-key:
+                  summary: Falscher API-Key
+                  value: "Invalid API Key for Partner Id"
+                invalid-partner:
+                  summary: Unbekannte Partner-Id
+                  value: "Invalid Partner Id"
+        "500":
+          description: Interner Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              example:
+                timestamp: "2025-01-15T10:30:00Z"
+                correlationId: "550e8400-e29b-41d4-a716-446655440000"
+                code: "INTERNAL_SERVER_ERROR"
+                message: "An internal error occurred"
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    InvoiceMessage:
+      type: object
+      xml:
+        name: message
+        namespace: "http://documentgateway.de/invoice/v1"
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: "1"
+    MessageResponse:
+      type: object
+      required:
+        - correlationId
+        - status
+        - message
+      properties:
+        correlationId:
+          type: string
+          format: uuid
+          description: Korrelations-ID des verarbeiteten Requests
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        status:
+          type: string
+          description: Verarbeitungsstatus
+          example: "RECEIVED"
+        message:
+          type: string
+          description: Statusbeschreibung
+          example: "Message received successfully"
+    ApiErrorResponse:
+      type: object
+      required:
+        - timestamp
+        - correlationId
+        - code
+        - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Zeitpunkt des Fehlers (ISO 8601)
+          example: "2025-01-15T10:30:00Z"
+        correlationId:
+          type: string
+          description: Korrelations-ID des fehlgeschlagenen Requests
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        code:
+          type: string
+          description: Maschinenlesbarer Fehlercode
+          example: "MISSING_HEADER"
+        message:
+          type: string
+          description: Menschenlesbare Fehlerbeschreibung
+          example: "Required request header 'X-Message-Type' is not present"
