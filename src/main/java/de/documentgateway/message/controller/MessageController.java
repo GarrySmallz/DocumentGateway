@@ -13,6 +13,7 @@ public class MessageController {
 
     private final MessageService messageService;
 
+
     @PostMapping
     public ResponseEntity<MessageResponse> receiveMessage(
           @RequestHeader("X-Partner-Id") String partnerId,

@@ -59,4 +59,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
         return header.trim();
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.equals("/openapi.yaml");
+    }
 }
