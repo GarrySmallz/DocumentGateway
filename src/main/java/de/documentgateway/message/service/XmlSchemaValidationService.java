@@ -27,6 +27,11 @@ public class XmlSchemaValidationService {
     @PostConstruct
     void loadSchema()  throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        // security reasons to defend against  XML External Entity Injection (OWASP A03)
+        // verbietet das Laden externer DTDs
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        // verbietet das Nachladen externer XSD-Referenzen
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         URL url = getClass().getResource("/xsd/invoice-message.xsd");
         if (url == null) {
             throw new IllegalStateException("XSD not found: /xsd/invoice-message.xsd");
@@ -46,6 +51,9 @@ public class XmlSchemaValidationService {
 
         try {
             Validator validator = invoiceSchema.newValidator();
+            // security reasons to defend against  XML External Entity Injection (OWASP A03)
+            validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             validator.validate(new StreamSource(new StringReader(xmlPayload)));
         } catch (SAXException e) {
             throw new ApiException(

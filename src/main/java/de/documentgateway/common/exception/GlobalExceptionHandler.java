@@ -59,13 +59,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleException(Exception ex, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorResponse> handleException(HttpServletRequest request) {
         String correlationId = resolveCorrelationId(request);
         ApiErrorResponse body = new ApiErrorResponse(
                 Instant.now(),
                 correlationId,
                 "INTERNAL_SERVER_ERROR",
-                ex.getMessage()         );
+                "An internal error occurred"
+        );
         return ResponseEntity.status(500).body(body);
     }
 }
