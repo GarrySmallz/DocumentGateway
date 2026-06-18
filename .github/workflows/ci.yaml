@@ -30,3 +30,7 @@ jobs:
         run: mvn -B compile
       - name: Run SAST analysis
         run: mvn -B spotbugs:check
+      - name: Run Dependency Check
+        run: mvn -B dependency-check:check -Dnvd.api.key=${{ secrets.NVD_API_KEY }}
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
