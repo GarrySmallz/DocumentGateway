@@ -15,7 +15,11 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
-      - name: Run tests
-        run: mvn -B test
       - name: Run verification
         run: mvn -B verify
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run SAST analysis
+        run: mvn spotbugs:check
