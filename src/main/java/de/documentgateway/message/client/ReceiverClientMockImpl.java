@@ -14,7 +14,9 @@ public class ReceiverClientMockImpl implements ReceiverClient {
 
         long start = System.currentTimeMillis();
         log.info("event=receiver_send_attempt receiverId={} correlationId={} payloadSize={}",
-                receiverId, correlationId, xmlPayload.length());
+                receiverId.replace("\r\n", " "),
+                correlationId.replace("\r\n", " "),
+                xmlPayload.length());
 
         if (receiverId ==null || receiverId.isBlank()) {
 
@@ -26,11 +28,16 @@ public class ReceiverClientMockImpl implements ReceiverClient {
         try {
             long duration = System.currentTimeMillis() - start;
             log.info("event=receiver_send_success receiverId={} correlationId={} durationMs={}",
-                    receiverId, correlationId, duration);
+                    receiverId.replace("\r\n", " "),
+                    correlationId.replace("\r\n", " "),
+                    duration);
         } catch (Exception ex) {
             long duration = System.currentTimeMillis() - start;
             log.error("event=receiver_send_failure receiverId={} correlationId={} durationMs={} errorType={}",
-                    receiverId, correlationId, duration, ex.getClass().getSimpleName(), ex);
+                    receiverId.replace("\r\n", " "),
+                    correlationId.replace("\r\n", " "),
+                    duration,
+                    ex.getClass().getSimpleName(), ex);
             throw ex;
         }
 
