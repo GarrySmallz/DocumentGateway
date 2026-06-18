@@ -2,6 +2,7 @@ package de.documentgateway.message.client;
 
 import de.documentgateway.common.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.internal.annotation.SuppressFBWarnings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Service;
 public class ReceiverClientMockImpl implements ReceiverClient {
 
     @Override
+    @SuppressFBWarnings(
+            value = "CRLF_INJECTION_LOGS",
+            justification = "User input sanitized via .replace before logging; Logback pattern adds second layer"
+    )
     public void send(String receiverId, String correlationId, String xmlPayload) {
 
         long start = System.currentTimeMillis();
