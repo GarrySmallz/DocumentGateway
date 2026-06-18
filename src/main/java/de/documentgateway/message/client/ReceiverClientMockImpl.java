@@ -20,9 +20,9 @@ public class ReceiverClientMockImpl implements ReceiverClient {
         long start = System.currentTimeMillis();
 
         if (receiverId ==null || receiverId.isBlank()) {
-
+            
             log.error("event=receiver_send_failure receiverId={} correlationId={} reason=receiverId_blank",
-                    receiverId.replace("\r\n", " "),
+                    receiverId != null ? receiverId.replace("\r\n", " ") : null,
                     correlationId.replace("\r\n", " "));
             throw new ApiException(HttpStatus.BAD_REQUEST, "RECEIVER_ID_BLANK", "receiverId is blank");
         }
