@@ -1,0 +1,54 @@
+name: Security Scan
+on:
+  schedule:
+    - cron: '0 2 * * 1'   # montags 2 Uhr nachts
+  push:
+    branches: [ main ]
+    paths:
+      - 'pom.xml'
+      - 'Dockerfile'
+  workflow_dispatch:
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'DocumentGateway'
+          path: '.'
+          format: 'HTML'
+          args: >
+            --nvdApiKey ${{ secrets.NVD_API_KEY }}
+            --failOnCVSS 7
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: reports/
+  container-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Build JAR
+        run: mvn -B package -DskipTests
+      - name: Build Docker image
+        run: docker build -t documentgateway:scan .
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: documentgateway:scan
+          format: sarif
+          output: trivy-results.sarif
+          severity: HIGH,CRITICAL
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
