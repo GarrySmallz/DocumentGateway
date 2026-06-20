@@ -7,6 +7,8 @@ on:
     paths:
       - 'pom.xml'
       - 'Dockerfile'
+  workflow_dispatch:
+
 jobs:
   dependency-check:
     runs-on: ubuntu-latest

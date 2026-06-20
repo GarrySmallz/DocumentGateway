@@ -2,6 +2,8 @@ name: DAST
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   zap-scan:
     runs-on: ubuntu-latest
