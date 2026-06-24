@@ -14,6 +14,15 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+      - name: Start application stack
+        run: docker compose up -d --build
+        env:
+          DB_NAME: ${{ vars.DB_NAME }}
+          DB_USER: ${{ vars.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD_TEST }}
+          DB_HOST: db
+          GATEWAY_API_KEY_PARTNER_A: ${{ secrets.GATEWAY_API_KEY_PARTNER_A }}
+          GATEWAY_API_KEY_PARTNER_B: ${{ secrets.GATEWAY_API_KEY_PARTNER_B }}
       - name: Build JAR
         run: mvn -B package -DskipTests
       - name: Start application stack
