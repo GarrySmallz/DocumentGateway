@@ -33,10 +33,12 @@ jobs:
             echo "Waiting... ($i)"
             sleep 5
           done
+      - name: Verify app reachable from container
+        run: docker run --rm curlimages/curl curl -sf http://172.17.0.1:8080/actuator/health
       - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
-          target: 'http://localhost:8080'
+          target: 'http://172.17.0.1:8080'
           fail_action: false
       - name: Stop stack
         if: always()
