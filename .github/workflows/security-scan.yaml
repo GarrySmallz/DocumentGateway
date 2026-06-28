@@ -12,6 +12,9 @@ on:
 jobs:
   dependency-check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v6
       - name: Run Dependency Check
