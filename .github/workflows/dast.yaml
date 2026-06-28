@@ -34,11 +34,25 @@ jobs:
         run: docker compose logs db
       - name: Wait for app to be healthy
         run: |
-          for i in {1..20}; do
-            curl -sf http://localhost:8080/actuator/health && break
-            echo "Waiting... ($i)"
+          for i in {1..30}; do
+            if curl -sf http://localhost:8080/actuator/health; then
+              echo "App is healthy after $i attempts"
+              exit 0
+            fi
+            echo "Attempt $i/30 failed"
             sleep 5
           done
+          echo "ERROR: App never became healthy"
+          docker compose logs app
+          exit 1
+      - name: "[DEBUG] Container status after wait"
+        run: docker compose ps
+      - name: "[DEBUG] App logs after wait"
+        run: docker compose logs --tail=50 app
+      - name: "[DEBUG] DB logs after wait"
+        run: docker compose logs --tail=20 db
+      - name: "[DEBUG] Check if app port is listening"
+        run: ss -tlnp | grep 8080 || echo "NOTHING on 8080"
       - name: Verify app reachable from container
         run: docker run --rm --network host curlimages/curl curl -sf http://172.17.0.1:8080/actuator/health
       - name: Get Docker host IP
