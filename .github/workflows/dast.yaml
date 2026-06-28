@@ -18,12 +18,10 @@ jobs:
         run: mvn -B package -DskipTests
       - name: Create .env from secrets
         run: |
-          cat > .env << EOF
-          DB_NAME=${{ vars.DB_NAME }}
-          DB_USER=${{ vars.DB_USER }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD_TEST }}
-          DB_HOST=db
-          EOF
+          echo "DB_NAME=bewerbungsprojekt" >> .env
+          echo "DB_USER=appuser" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_TEST }}" >> .env
+          echo "DB_HOST=db" >> .env
       - name: Start application stack
         run: docker compose up -d --build
       - name: Show container status
