@@ -20,6 +20,12 @@ services:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
   adminer:
     image: adminer
     container_name: adminer-dev
