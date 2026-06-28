@@ -5,8 +5,10 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    restart: on-failure
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: mariadb:11
     container_name: mariadb-dev
