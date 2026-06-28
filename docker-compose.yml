@@ -23,11 +23,11 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
-      start_period: 10s
+      test: [ "CMD-SHELL", "mariadb -u root -prootpass -e 'SELECT 1' 2>/dev/null || exit 1" ]
+      start_period: 30s
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 15
   adminer:
     image: adminer
     container_name: adminer-dev
