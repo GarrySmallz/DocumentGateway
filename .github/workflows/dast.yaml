@@ -27,12 +27,6 @@ jobs:
           echo "DB_HOST=db" >> .env
       - name: Start application stack
         run: docker compose up -d --build
-      - name: Show container status
-        run: docker compose ps
-      - name: Show app logs
-        run: docker compose logs app
-      - name: Show db logs
-        run: docker compose logs db
       - name: Wait for app to be healthy
         run: |
           for i in {1..30}; do
@@ -46,16 +40,6 @@ jobs:
           echo "ERROR: App never became healthy"
           docker compose logs app
           exit 1
-      - name: "[DEBUG] Container status after wait"
-        run: docker compose ps
-      - name: "[DEBUG] App logs after wait"
-        run: docker compose logs --tail=50 app
-      - name: "[DEBUG] DB logs after wait"
-        run: docker compose logs --tail=20 db
-      - name: "[DEBUG] Check if app port is listening"
-        run: ss -tlnp | grep 8080 || echo "NOTHING on 8080"
-      - name: Verify app reachable from container
-        run: docker run --rm --network host curlimages/curl curl -sf http://172.17.0.1:8080/actuator/health
       - name: Get Docker host IP
         run: echo "DOCKER_HOST_IP=$(docker network inspect bridge --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}')" >> $GITHUB_ENV
       - name: ZAP Full Scan
