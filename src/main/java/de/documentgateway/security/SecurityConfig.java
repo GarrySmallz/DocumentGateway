@@ -26,7 +26,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
-                                "/openapi.yaml"
+                                "/openapi.yaml",
+                                "/actuator/health"
                                 ).permitAll().anyRequest()
                                 .authenticated())
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
