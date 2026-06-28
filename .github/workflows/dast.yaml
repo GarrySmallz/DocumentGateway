@@ -26,6 +26,12 @@ jobs:
           EOF
       - name: Start application stack
         run: docker compose up -d --build
+      - name: Show container status
+        run: docker compose ps
+      - name: Show app logs
+        run: docker compose logs app
+      - name: Show db logs
+        run: docker compose logs db
       - name: Wait for app to be healthy
         run: |
           for i in {1..20}; do
