@@ -5,16 +5,14 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-export function MessageSender() {
+export function MessageSender({ apiKey, partnerId }: Readonly<{ apiKey: string, partnerId: string }>) {
 
-    const [apiKey, setApiKey] = useState('')
-    const [partnerId, setPartnerId] = useState('partner-a')
     const [messageType, setMessageType] = useState('invoice')
     const [correlationId, setCorrelationId] = useState(() => crypto.randomUUID())
-    const [xml, setXml] = useState('')
+    const [xml, setXml] = useState(`<message xmlns="http://documentgateway.de/invoice/v1">
+  <id>INV-001</id>
+</message>`)
     const [result, setResult] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
@@ -38,34 +36,29 @@ export function MessageSender() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <Label>
-                API Schlüssel
-                <Input type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)}/>
-            </Label>
-            <Label>
-                Partner-ID
-                <Select value={partnerId} onValueChange={setPartnerId}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Partner auswählen"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="partner-a">Partner A</SelectItem>
-                        <SelectItem value="partner-b">Partner B</SelectItem>
-                    </SelectContent>
-                </Select>
-            </Label>
-            <Label>
-                Nachrichtentyp
+            <div className="space-y-2">
+                <Label>
+                    Nachrichtentyp
+
+                </Label>
                 <Input type="text" value={messageType} onChange={(e) => setMessageType(e.target.value)}/>
-            </Label>
-            <Label>
-                Correlation-ID
+            </div>
+            <div className="space-y-2">
+                <Label>
+                    Correlation-ID
+
+                </Label>
                 <Input type="text" value={correlationId} readOnly/>
-            </Label>
-            <Label>
-                XML Nachricht
+            </div>
+            <div className="space-y-2">
+                <Label>
+                    XML Nachricht
+
+                </Label>
                 <Textarea value={xml} onChange={(e) => setXml(e.target.value)}/>
-            </Label>
+            </div>
+            {result && <p className="text-green-600">Gesendet: {result}</p>}
+            {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" disabled={loading}>
                 Senden
             </Button>

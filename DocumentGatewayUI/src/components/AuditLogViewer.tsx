@@ -4,21 +4,21 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import {Badge} from "@/components/ui/badge";
 
-export function AuditLogViewer({ apiKey }: { apiKey : string}) {
+export function AuditLogViewer({ apiKey, partnerId }: Readonly<{ apiKey: string, partnerId: string }>) {
     const [events, setEvents] = useState<AuditEventDto[]>([])
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const load = () => {
-            getAuditEvents(apiKey)
+            getAuditEvents(apiKey, partnerId)
                 .then(setEvents)
                 .catch(() => setError('Fehler beim Laden'))
         }
 
         load()
-        const interval = setInterval(load, 1000)
+        const interval = setInterval(load, 10000)
         return (() => clearInterval(interval))
-    }, [apiKey])
+    }, [apiKey, partnerId])
 
     return (
         <Card>

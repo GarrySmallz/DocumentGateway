@@ -15,10 +15,11 @@ export interface MessageResponse {
     status: string
 }
 
-export async function getAuditEvents(apiKey: string): Promise<AuditEventDto[]> {
+export async function getAuditEvents(apiKey: string, partnerId: string): Promise<AuditEventDto[]> {
     const response = await fetch(`${BASE_URL}/api/v1/audit`, {
         headers: {
-            'X-API-Key': apiKey
+            'X-API-Key': apiKey,
+            'X-Partner-Id': partnerId
         }
     });
     if (!response.ok) {
