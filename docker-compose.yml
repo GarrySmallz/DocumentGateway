@@ -39,5 +39,16 @@ services:
       - "8081:8080"
     depends_on:
       - db
+  ui:
+    build:
+      context: ./DocumentGatewayUI
+      args:
+        VITE_API_URL: http://localhost:8080
+    ports:
+        - "8082:80"
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
 volumes:
-  mariadb_data:
+  mariadb_data:  
