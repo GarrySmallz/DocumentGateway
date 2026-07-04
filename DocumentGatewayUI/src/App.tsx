@@ -28,8 +28,8 @@ export default function App() {
         </div>
         <div className="space-y-1.5 mb-4">
           <Label className="block text-sm font-medium mb-1">Partner-ID</Label>
-          <Select value={partnerId} onValueChange={setPartnerId} className="max-w-sm">
-            <SelectTrigger>
+          <Select value={partnerId} onValueChange={setPartnerId} >
+            <SelectTrigger className="max-w-sm">
               <SelectValue placeholder="Partner auswählen"/>
             </SelectTrigger>
             <SelectContent>
