@@ -11,6 +11,19 @@ Architektur: [../docs/architecture.md](../docs/architecture.md)
 - Maven 3.9+
 - Docker + Docker Compose (für lokale MariaDB)
 
+## Deployment(Docker)
+### .env anlegen (DB_PASSWORD etc.)
+docker compose up -d --build
+
+### UI öffnen
+http://localhost:8082
+
+### Stoppen
+docker compose down
+
+### Stoppen inkl. DB-Daten löschen
+docker compose down -v
+
 ## Schnellstart (lokal)
 
 ### 1. Datenbank starten
@@ -118,8 +131,3 @@ Routing-Ziele kommen **nur** aus der Config (keine URL aus dem Client) — SSRF-
 - Fehlerantworten ohne Stacktraces; Details siehe `GlobalExceptionHandler` und [api-contract.md](api-contract.md).
 - `X-Correlation-Id` für Logs und Audit mitgeben (wird bei Auth-Fehlern ggf. generiert).
 
-## MVP-Scope
-
-Enthalten: ein Message-Type (`invoice`), XSD-Validierung, Partner-Key-Auth, Routing-Mock, Audit.
-
-Bewusst später: zweiter Partner produktiv, Admin-UI, mTLS, K8s-Feintuning — siehe [../docs/mvp.md](../docs/mvp.md).
