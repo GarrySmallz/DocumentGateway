@@ -10,8 +10,8 @@ RUN mvn package -DskipTests
 # ── Stage 2: Runtime ────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 
-# Non-root User anlegen — Sicherheit: kein root-Prozess im Container
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Non-root User anlegen — Sicherheit: kein root-Prozess im Container und install wget for healthcheck
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup &&  apk add --no-cache wget
 
 WORKDIR /app
 
