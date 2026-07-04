@@ -25,7 +25,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) {
         http.cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:5173"));
+                    config.setAllowedOrigins(List.of(
+                            "http://localhost:5173", //vite dev
+                            "http://localhost:8082"  // Docker UI
+                    ));
                     config.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));
                     return config;

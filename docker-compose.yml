@@ -9,6 +9,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: db
   db:
     image: mariadb:11
     container_name: mariadb-dev
