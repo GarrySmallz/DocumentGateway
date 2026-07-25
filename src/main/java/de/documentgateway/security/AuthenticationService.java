@@ -24,16 +24,14 @@ public class AuthenticationService {
 
 
         if (partnerId == null || partnerId.isBlank()) {
-            throw new BadCredentialsException("Invalid Partner Id");
+            throw new BadCredentialsException("Invalid credentials");
         }
-        if (apiKey == null || apiKey.isBlank()) {
-            throw new BadCredentialsException("Invalid API Key");
-        } else if (!gatewayApiKeyProperties.getApiKeys().containsKey(partnerId)) {
-            throw new BadCredentialsException("Invalid Partner Id");
+        if (apiKey == null || apiKey.isBlank() || !gatewayApiKeyProperties.getApiKeys().containsKey(partnerId)) {
+            throw new BadCredentialsException("Invalid credentials");
         }
         String expectedApiKey = gatewayApiKeyProperties.getApiKeys().get(partnerId);
         if (!MessageDigest.isEqual(expectedApiKey.getBytes(), apiKey.getBytes())) {
-            throw new BadCredentialsException("Invalid API Key for Partner Id");
+            throw new BadCredentialsException("Invalid credentials");
         }
 
         return new ApiKeyAuthentication(apiKey, AuthorityUtils.NO_AUTHORITIES);

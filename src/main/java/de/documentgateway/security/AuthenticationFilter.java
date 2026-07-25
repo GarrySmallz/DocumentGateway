@@ -3,6 +3,7 @@ package de.documentgateway.security;
 import de.documentgateway.audit.AuditEventType;
 import de.documentgateway.audit.AuditOutcome;
 import de.documentgateway.audit.AuditService;
+import de.documentgateway.common.exception.ApiErrorResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,9 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.time.Instant;
 import java.util.UUID;
 
 @Component
@@ -27,6 +29,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationService authenticationService;
 
     private final AuditService auditService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -45,10 +48,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     AuditEventType.REJECTED_AUTH,
                     AuditOutcome.FAILURE,
                     e.getMessage());
-            PrintWriter writer = response.getWriter();
-            writer.print(e.getMessage());
-            writer.flush();
-            writer.close();
+
+            ApiErrorResponse errorResponse = new ApiErrorResponse(
+                    Instant.now(),
+                    correlationID,
+                    "AUTH_FAILED",
+                    "Invalid credentials"
+            );
+
+            objectMapper.writeValue(response.getWriter(), errorResponse);
         }
     }
 
