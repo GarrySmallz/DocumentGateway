@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.BadCredentialsException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -36,6 +37,9 @@ class AuthenticationFilterTest {
 
     @Mock
     private FilterChain filterChain;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private AuthenticationFilter authenticationFilter;
